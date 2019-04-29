@@ -20,7 +20,6 @@ public class GroundScene implements Scene {
 	private static final int DEPTH = 10;
 
 	private Keyboard keys = Keyboard.getInstance();
-	private boolean wireframe = true;
 
 	/** Representa a malha do quadrado. */
 
@@ -76,7 +75,7 @@ public class GroundScene implements Scene {
 		//------------------
 		//Criação da malha
 		//------------------
-		ground = createGround(WIDTH, DEPTH);
+		ground = createGround(WIDTH, DEPTH).setWireframe(true);
 	}
 
 	@Override
@@ -86,7 +85,7 @@ public class GroundScene implements Scene {
 			//Fecha a janela, caso tenha sido
 			glfwSetWindowShouldClose(glfwGetCurrentContext(), true);
 		} else if (keys.isPressed(GLFW_KEY_M)) {
-			wireframe = !wireframe;
+			ground.setWireframe(!ground.isWireframe());
 		}
 	}
 
@@ -94,8 +93,6 @@ public class GroundScene implements Scene {
 	public void draw() {
 		//Solicita a limpeza da tela
 		glClear(GL_COLOR_BUFFER_BIT);
-
-		glPolygonMode(GL_FRONT_AND_BACK, wireframe ? GL_LINE : GL_FILL);
 
 		//Associa a transformação a malha
 		ground.setUniform("uWorld", new Matrix4f().rotateX((float) Math.toRadians(40)).scale(2.0f / WIDTH));

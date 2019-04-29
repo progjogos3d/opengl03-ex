@@ -3,7 +3,7 @@
 //Matriz de transformação World. Deve ser carregada pelo Java.
 uniform mat4 uWorld;
 
-//Atributo dos do vértie
+//Atributo dos do vértice
 in vec3 aPosition;
 
 
