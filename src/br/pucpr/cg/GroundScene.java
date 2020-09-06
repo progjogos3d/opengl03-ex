@@ -24,17 +24,18 @@ public class GroundScene implements Scene {
 	/** Representa a malha do quadrado. */
 
 	private Mesh ground;
+	private Shader shader;
 
-	private Mesh createGround(int width, int depth) {
+	private Mesh createGround(Shader shader, int width, int depth) {
 		//A malha precisa ser centralizada. Por isso devemos subtrair metade da largura do eixo x e metade da
         // profundidade no eixo z.
-		float hw = (width-1) / 2.0f;
-		float hd = (depth-1) / 2.0f;
+		var hw = (width-1) / 2.0f;
+		var hd = (depth-1) / 2.0f;
 
 		// Criação dos vértices
-		List<Vector3f> positions = new ArrayList<>();
-		for (int z = 0; z < depth; z++) {
-			for (int x = 0; x < width; x++) {
+		var positions = new ArrayList<Vector3f>();
+		for (var z = 0; z < depth; z++) {
+			for (var x = 0; x < width; x++) {
 				positions.add(new Vector3f(x - hw, 0, z - hd));
 			}
 		}
@@ -42,13 +43,13 @@ public class GroundScene implements Scene {
 		//Criação dos índices
         //Os índices são criados por quadrado, de 6 em 6.
         // Teremos sempre 1 quadrado a menos do que vertices. Por exemplo, num grid de 10x20 teremos 9x19 quadrados.
-		List<Integer> indices = new ArrayList<>();
-		for (int z = 0; z < depth - 1; z++) {
-			for (int x = 0; x < width - 1; x++) {
-				int zero = x + z * width;               //inferior esquerdo
-				int one = (x + 1) + z * width;          //inferior direito
-				int two = x + (z + 1) * width;          //superior esquerdo
-				int three = (x + 1) + (z + 1) * width;  //superior direito
+		var indices = new ArrayList<Integer>();
+		for (var z = 0; z < depth - 1; z++) {
+			for (var x = 0; x < width - 1; x++) {
+				var zero = x + z * width;               //inferior esquerdo
+				var one = (x + 1) + z * width;          //inferior direito
+				var two = x + (z + 1) * width;          //superior esquerdo
+				var three = (x + 1) + (z + 1) * width;  //superior direito
 
 				indices.add(zero);
 				indices.add(three);
@@ -60,10 +61,9 @@ public class GroundScene implements Scene {
 			}
 		}
 
-		return new MeshBuilder()
+		return new MeshBuilder(shader)
                 .addVector3fAttribute("aPosition", positions)
                 .setIndexBuffer(indices)
-                .loadShader("/br/pucpr/resource/basic")
                 .create();
 	}
 
@@ -72,10 +72,15 @@ public class GroundScene implements Scene {
 		//Define a cor de limpeza da tela
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-		//------------------
-		//Criação da malha
-		//------------------
-		ground = createGround(WIDTH, DEPTH).setWireframe(true);
+		shader = Shader.loadProgram("basic");
+		//Cria o chão, associa a ele uma rotação de 40 graus em x (para ficar visível) e ajusta a escala
+		ground = createGround(shader, WIDTH, DEPTH)
+			.setWireframe(true)
+			.setUniform("uWorld",
+				new Matrix4f()
+					.rotateX((float) Math.toRadians(40))
+					.scale(2.0f / WIDTH)
+			);
 	}
 
 	@Override
@@ -94,11 +99,8 @@ public class GroundScene implements Scene {
 		//Solicita a limpeza da tela
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		//Associa a transformação a malha
-		ground.setUniform("uWorld", new Matrix4f().rotateX((float) Math.toRadians(40)).scale(2.0f / WIDTH));
-
 		//Desenha
-		ground.draw();
+		ground.draw(shader);
 	}
 
 	@Override
