@@ -8,7 +8,6 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Exercício da aula 3
@@ -72,6 +71,9 @@ public class GroundScene implements Scene {
 		//Define a cor de limpeza da tela
 		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
+		glEnable(GL_CULL_FACE);
+		glEnable(GL_DEPTH_TEST);
+
 		shader = Shader.loadProgram("basic");
 		//Cria o chão, associa a ele uma rotação de 40 graus em x (para ficar visível) e ajusta a escala
 		ground = createGround(shader, WIDTH, DEPTH)
@@ -97,7 +99,7 @@ public class GroundScene implements Scene {
 	@Override
 	public void draw() {
 		//Solicita a limpeza da tela
-		glClear(GL_COLOR_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		//Desenha
 		ground.draw(shader);
