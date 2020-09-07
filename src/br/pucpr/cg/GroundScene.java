@@ -16,7 +16,7 @@ import java.util.ArrayList;
  */
 public class GroundScene implements Scene {
 	private static final int WIDTH = 20;
-	private static final int DEPTH = 10;
+	private static final int DEPTH = 15;
 
 	private Keyboard keys = Keyboard.getInstance();
 
@@ -25,7 +25,7 @@ public class GroundScene implements Scene {
 	private Mesh ground;
 	private Shader shader;
 
-	private Mesh createGround(Shader shader, int width, int depth) {
+	private Mesh createGround(int width, int depth) {
 		//A malha precisa ser centralizada. Por isso devemos subtrair metade da largura do eixo x e metade da
         // profundidade no eixo z.
 		var hw = (width-1) / 2.0f;
@@ -75,8 +75,9 @@ public class GroundScene implements Scene {
 		glEnable(GL_DEPTH_TEST);
 
 		shader = Shader.loadProgram("basic");
+
 		//Cria o chão, associa a ele uma rotação de 40 graus em x (para ficar visível) e ajusta a escala
-		ground = createGround(shader, WIDTH, DEPTH)
+		ground = createGround(WIDTH, DEPTH)
 			.setWireframe(true)
 			.setUniform("uWorld",
 				new Matrix4f()
