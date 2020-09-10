@@ -177,6 +177,7 @@ public class Shader {
         if (buffer == null) {
             glDisableVertexAttribArray(attribute);
         } else {
+            buffer.bind();
             glVertexAttribPointer(attribute, buffer.getElementSize(), GL_FLOAT, false, 0, 0);
             glEnableVertexAttribArray(attribute);
         }
