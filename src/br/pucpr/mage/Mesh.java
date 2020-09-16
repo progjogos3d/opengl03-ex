@@ -218,7 +218,7 @@ public class Mesh {
         glBindVertexArray(0);
 
         attributes.values().forEach(ArrayBuffer::unbind);
-        indexBuffer.unbind();
+        if (indexBuffer != null) indexBuffer.unbind();
         return this;
     }
 }
